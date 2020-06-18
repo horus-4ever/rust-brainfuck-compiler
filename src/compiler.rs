@@ -56,12 +56,10 @@ impl Compiler {
                     result.push_str(&strfmt(_CHECK_ESI_INC, &map).unwrap());
                 }
                 TokenKind::Dot => {
-                    map.insert("number".to_string(), format!("{}", n));
-                    result.push_str(&strfmt(_ON_PRINT, &map).unwrap());
+                    for _ in 0..n { result.push_str(_ON_PRINT) }
                 }
                 TokenKind::Comma => {
-                    map.insert("number".to_string(), format!("{}", n));
-                    for _ in 0..n { result.push_str(&strfmt(_ON_INPUT, &map).unwrap()) }
+                    for _ in 0..n { result.push_str(_ON_INPUT) }
                 }
                 TokenKind::LSBracket => {
                     for i in 0..n { stack.push((token.position, token.position + i)) }
@@ -81,6 +79,7 @@ impl Compiler {
             handle.write(result.as_bytes()).unwrap();
         }
         handle.write(_CODE_END.as_bytes()).unwrap();
+        handle.flush().unwrap();
         // execute the build script
         let output = Command::new("sh")
             .arg(format!("{}/src/build.sh", env::current_dir().unwrap().to_str().unwrap()))
