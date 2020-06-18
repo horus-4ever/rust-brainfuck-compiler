@@ -85,7 +85,17 @@ code:
     
     sub esp, STACK_SIZE         ; esp : stack part
     mov edi, esp
-    
+
+    xor eax, eax                ; fill the stack with null bytes
+.L1:
+    cmp edi, ebp
+    jge .L1end
+    stosb
+    inc edi
+    jmp .L1
+.L1end:
+    mov edi, esp
+
     mov edx, 1
 
     ; ==========
@@ -130,7 +140,6 @@ pub const _LOOP_END: &'static str = "
 ";
 
 pub const _ON_PRINT: &'static str = "
-    mov edx, {number}
     call print
 ";
 
