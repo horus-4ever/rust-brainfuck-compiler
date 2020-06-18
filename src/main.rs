@@ -22,7 +22,6 @@ fn main() {
     let mut handle = fs::File::open(filename).unwrap();
     let mut result = String::new();
     handle.read_to_string(&mut result).unwrap();
-    //result = "[[-]<]".to_string();
     // lexer
     let parser: Parser = Lexer::new(result.char_indices()).tokenize().into();
     let compiler: Compiler = parser.parse().unwrap().into();
