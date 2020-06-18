@@ -20,5 +20,5 @@ Security of the binary :
 In the `test` folder, there are some brainfuck code examples. In the `build` directory, there is a CLI Mandelbrot programm. The original brainfuck source code is not provided.
 
 ## TODO List
-- [ ] Working and efficient compiler
-- [x] A real error handling for runtime errors
+- [x] Working and efficient compiler
+- [ ] A real error handling for runtime errors
