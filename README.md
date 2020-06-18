@@ -2,6 +2,7 @@
 * [General Info](#general-info)
 * [Description](#description)
 * [Examples](#examples)
+* [TODO List](#todo-list)
 
 ## General Info
 This project is a brainfuck compiler entirely written in Rust. It aims to produce fast and secured brainfuck binaries.
@@ -17,3 +18,7 @@ Security of the binary :
 
 ## Examples
 In the `test` folder, there are some brainfuck code examples. In the `build` directory, there is a CLI Mandelbrot programm. The original brainfuck source code is not provided.
+
+## TODO List
+- [ ] Working and efficient compiler
+- [x] A real error handling for runtime errors
