@@ -1,4 +1,4 @@
-use crate::token::{Token, TokenKind};
+use crate::token::{Token};
 use std::str::{CharIndices};
 use std::convert::{TryFrom};
 
@@ -11,7 +11,7 @@ impl<'a> Lexer<'a> {
         Self { chars }
     }
 
-    pub fn tokenize(mut self) -> Vec<Token> {
+    pub fn tokenize(self) -> Vec<Token> {
         self.chars
             .filter_map(|(pos, chr)| Token::try_from((pos, chr)).ok())
             .collect()

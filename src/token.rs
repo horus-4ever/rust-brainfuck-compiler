@@ -1,23 +1,24 @@
 use std::fmt::{Debug};
 use std::convert::{TryFrom};
+use std::clone::{Clone};
+use std::cmp::{PartialEq};
 
 #[derive(Debug)]
 pub struct Token {
-    kind: TokenKind,
-    position: usize
+    pub kind: TokenKind,
+    pub position: usize
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum TokenKind {
     Plus,
     Minus,
-    Rarrow,
+    RArrow,
     LArrow,
     RSBracket,
     LSBracket,
     Dot,
-    Comma,
-    EOF
+    Comma
 }
 
 impl TryFrom<char> for TokenKind {
@@ -27,7 +28,7 @@ impl TryFrom<char> for TokenKind {
             '+' => Ok(Self::Plus),
             '-' => Ok(Self::Minus),
             '<' => Ok(Self::LArrow),
-            '>' => Ok(Self::Rarrow),
+            '>' => Ok(Self::RArrow),
             '[' => Ok(Self::LSBracket),
             ']' => Ok(Self::RSBracket),
             '.' => Ok(Self::Dot),
