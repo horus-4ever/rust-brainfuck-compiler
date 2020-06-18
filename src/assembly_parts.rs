@@ -11,6 +11,12 @@ askinput_msg_len equ $ - askinput_msg
 error_msg: db 'An error occured at runtime...', 10
 error_msg_len equ $ - error_msg
 
+error_overflow_msg: db 'Runtime error : The stack pointer exceeded the stack size => |>|', 10
+error_overflow_msg_len equ $ - error_overflow_msg
+
+error_underflow_msg: db 'Runtime error : The stack pointer went under the stack => |<|', 10
+error_underflow_msg_len equ $ - error_underflow_msg
+
 success_msg: db 10, 'Code successfully executed !', 10
 success_msg_len equ $ - success_msg
 
@@ -61,9 +67,15 @@ input:
 ";
 
 pub const _ON_ERROR: &'static str = "
+overflow_error:
+    mov edi, error_overflow_msg
+    mov edx, error_overflow_msg_len
+    jmp error
+underflow_error:
+    mov edi, error_underflow_msg
+    mov edx, error_underflow_msg_len
+    jmp error
 error:
-    mov edi, error_msg
-    mov edx, error_msg_len
     call print              ; show an error msg
     jmp exit               ; we must exit : it's an error
 ";
@@ -117,14 +129,14 @@ pub const _CODE_END: &'static str = "
 
 pub const _CHECK_ESI_INC: &'static str = "
     add edi, {number}
-    cmp edi, [ebp-STACK_SIZE]  ; compare with ebp - output_length
-    jg error                   ; if ebp > ebp-output_lenght, then print an error
+    cmp edi, ebp  ; compare with ebp - output_length
+    jg overflow_error                   ; if ebp > ebp-output_lenght, then print an error
 ";
 
 pub const _CHECK_ESI_DEC: &'static str = "
     sub edi, {number}
     cmp edi, esp            ; compare with esp
-    jl error               ; if edi <= esp, then print an error
+    jl underflow_error               ; if edi <= esp, then print an error
 ";
 
 pub const _LOOP_BEGIN: &'static str = "
