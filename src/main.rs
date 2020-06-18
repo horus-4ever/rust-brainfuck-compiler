@@ -15,7 +15,6 @@ use std::fs;
 
 fn main() {
     let mut args = env::args().skip(1);
-    println!("{:?}", env::current_dir().unwrap().to_str().unwrap());
     let filename = match args.next() {
         Some(arg) => arg,
         None => { println!("Use : ./compiler <filename>"); return }
