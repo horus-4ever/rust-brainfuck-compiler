@@ -24,10 +24,14 @@ impl Compiler {
         let mut stack: Vec<(usize, usize)> = vec![];
         let mut handle = File::create("temp.asm").unwrap();
         handle.write(String::from(
-            format!("{}section .data\n{}\nsection .text\nglobal _start\n{}\n{}\n{}",
+            format!("{}
+            section .data\n{}\n
+            section .bss\ninput_byte resb 2\n
+            section .text\nglobal _start\n{}\n{}\n{}\n{}",
             _DEFINES,
             _MESSAGES,
             _PRINT_FUNCTION,
+            _INPUT_FUNCTION,
             _ON_ERROR,
             _START_FUNCTION
         )).as_bytes()).unwrap();
@@ -83,6 +87,7 @@ impl Compiler {
             .arg(env::current_dir().unwrap().to_str().unwrap())
             .output()?;
         if !output.status.success() {
+            // println!("{:?}", String::from_utf8(output.stderr));
             Err(CompilerError{ kind: ErrorKind::BuildScriptFailure })
         } else {
             Ok(())
