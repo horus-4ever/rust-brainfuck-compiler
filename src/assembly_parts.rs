@@ -37,6 +37,35 @@ print:
     ret
 ";
 
+pub const _PRINT_NUMBER: &'static str = "
+print_number:
+    pusha
+    push ebp
+    mov ebp, esp
+.L1:
+    test eax, eax
+    jz .L2
+    xor edx, edx
+    mov eax, eax
+    mov ecx, 10
+    div ecx
+    add edx, '0'
+    push edx
+    jmp .L1
+.L2:
+    cmp esp, ebp
+    je .end
+    mov edi, esp
+    mov edx, 1
+    call print
+    pop edx
+    jmp .L2
+.end:
+    leave
+    popa
+    ret
+";
+
 pub const _INPUT_FUNCTION: &'static str = "
 input:
     pusha
@@ -83,7 +112,7 @@ error:
 pub const _START_FUNCTION: &'static str = "
 _start:
     call code
-    
+
     mov edi, success_msg
     mov edx, success_msg_len
     call print                  ; print a success msg
@@ -135,7 +164,9 @@ pub const _CHECK_ESI_INC: &'static str = "
 
 pub const _CHECK_ESI_DEC: &'static str = "
     sub edi, {number}
-    cmp edi, esp            ; compare with esp
+    mov eax, ebp
+    sub eax, STACK_SIZE
+    cmp edi, eax          ; compare with esp
     jl underflow_error               ; if edi <= esp, then print an error
 ";
 

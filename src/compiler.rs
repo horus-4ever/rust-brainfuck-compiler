@@ -27,10 +27,11 @@ impl Compiler {
             format!("{}
             section .data\n{}\n
             section .bss\ninput_byte resb 2\n
-            section .text\nglobal _start\n{}\n{}\n{}\n{}",
+            section .text\nglobal _start\n{}\n{}\n{}\n{}\n{}",
             _DEFINES,
             _MESSAGES,
             _PRINT_FUNCTION,
+            _PRINT_NUMBER,
             _INPUT_FUNCTION,
             _ON_ERROR,
             _START_FUNCTION
