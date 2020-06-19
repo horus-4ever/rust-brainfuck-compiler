@@ -21,5 +21,5 @@ In the `test` folder, there are some brainfuck code examples. In the `build` dir
 
 ## TODO List
 - [x] Working and efficient compiler
-- [ ] A real error handling for runtime errors
+- [x] A real error handling for runtime errors
 - [ ] Add command line argument to the compiler
