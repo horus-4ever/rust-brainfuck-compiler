@@ -39,6 +39,8 @@ impl Compiler {
         for (token, n) in self.tokens {
             let mut result = String::new();
             let mut map: HashMap<String, String> = HashMap::new();
+            let (column, row) = token.position;
+            let col_row = (row << 16) + column;
             match token.kind {
                 TokenKind::Plus => {
                     map.insert("number".to_string(), format!("{}", n));
@@ -50,10 +52,12 @@ impl Compiler {
                 }
                 TokenKind::LArrow => {
                     map.insert("number".to_string(), format!("{}", n));
+                    map.insert("position".to_string(), format!("{}", col_row));
                     result.push_str(&strfmt(_CHECK_ESI_DEC, &map).unwrap());
                 }
                 TokenKind::RArrow => {
                     map.insert("number".to_string(), format!("{}", n));
+                    map.insert("position".to_string(), format!("{}", col_row));
                     result.push_str(&strfmt(_CHECK_ESI_INC, &map).unwrap());
                 }
                 TokenKind::Dot => {
@@ -63,8 +67,8 @@ impl Compiler {
                     for _ in 0..n { result.push_str(_ON_INPUT) }
                 }
                 TokenKind::LSBracket => {
-                    for i in 0..n { stack.push((token.position, token.position + i)) }
-                    map.insert("level".to_string(), format!("{}", token.position));
+                    for i in 0..n { stack.push((col_row, col_row + i)) }
+                    map.insert("level".to_string(), format!("{}", col_row));
                     result.push_str(&strfmt(_LOOP_BEGIN, &map).unwrap());
                 }
                 TokenKind::RSBracket => {

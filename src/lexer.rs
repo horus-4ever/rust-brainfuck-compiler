@@ -12,8 +12,20 @@ impl<'a> Lexer<'a> {
     }
 
     pub fn tokenize(self) -> Vec<Token> {
-        self.chars
-            .filter_map(|(pos, chr)| Token::try_from((pos, chr)).ok())
-            .collect()
+        let mut result = vec![];
+        let mut column = 0;
+        let mut row = 0;
+        for (_, chr) in self.chars {
+            match chr {
+                '\n' => { row += 1; column = 0; },
+                _ => {
+                    if let Some(tok) = Token::try_from(((column, row), chr)).ok() {
+                        result.push(tok);
+                    }
+                    column += 1;
+                }
+            }
+        }
+        result
     }
 }

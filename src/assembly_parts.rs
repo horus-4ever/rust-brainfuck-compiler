@@ -11,6 +11,9 @@ askinput_msg_len equ $ - askinput_msg
 error_msg: db 'An error occured at runtime...', 10
 error_msg_len equ $ - error_msg
 
+error_pos: db 'Error occured at pos (row, column) : '
+error_pos_len equ $ - error_pos
+
 error_overflow_msg: db 'Runtime error : The stack pointer exceeded the stack size => |>|', 10
 error_overflow_msg_len equ $ - error_overflow_msg
 
@@ -22,6 +25,9 @@ success_msg_len equ $ - success_msg
 
 newline: db 10
 newlinelen equ $ - newline
+
+space: db 32
+spacelen equ $ - space
 ";
 
 pub const _PRINT_FUNCTION: &'static str = "
@@ -42,6 +48,9 @@ print_number:
     pusha
     push ebp
     mov ebp, esp
+    test eax, eax
+    jnz .L1
+    push '0'
 .L1:
     test eax, eax
     jz .L2
@@ -106,6 +115,22 @@ underflow_error:
     jmp error
 error:
     call print              ; show an error msg
+    mov edi, error_pos
+    mov edx, error_pos_len
+    call print
+    mov eax, ecx
+    mov ebx, ecx
+    and ebx, 0xFFFF
+    shr eax, 16
+    call print_number
+    mov edi, space
+    mov edx, 1
+    call print
+    mov eax, ebx
+    call print_number
+    mov edi, newline
+    mov edx, 1
+    call print
     jmp exit               ; we must exit : it's an error
 ";
 
@@ -157,16 +182,16 @@ pub const _CODE_END: &'static str = "
 
 
 pub const _CHECK_ESI_INC: &'static str = "
+    mov ecx, {position}
     add edi, {number}
     cmp edi, ebp  ; compare with ebp - output_length
     jg overflow_error                   ; if ebp > ebp-output_lenght, then print an error
 ";
 
 pub const _CHECK_ESI_DEC: &'static str = "
+    mov ecx, {position}
     sub edi, {number}
-    mov eax, ebp
-    sub eax, STACK_SIZE
-    cmp edi, eax          ; compare with esp
+    cmp edi, esp          ; compare with esp
     jl underflow_error               ; if edi <= esp, then print an error
 ";
 

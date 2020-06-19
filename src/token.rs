@@ -6,7 +6,7 @@ use std::cmp::{PartialEq};
 #[derive(Debug)]
 pub struct Token {
     pub kind: TokenKind,
-    pub position: usize
+    pub position: (usize, usize)
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -38,9 +38,9 @@ impl TryFrom<char> for TokenKind {
     }
 }
 
-impl TryFrom<(usize, char)> for Token {
+impl TryFrom<((usize, usize), char)> for Token {
     type Error = ();
-    fn try_from(value: (usize, char)) -> Result<Self, Self::Error> {
+    fn try_from(value: ((usize, usize), char)) -> Result<Self, Self::Error> {
         let kind = TokenKind::try_from(value.1)?;
         Ok(Self { kind, position: value.0 })
     }

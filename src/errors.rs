@@ -9,7 +9,7 @@ pub struct CompilerError {
 
 #[derive(fmt::Debug)]
 pub enum ErrorKind {
-    UnexpectedToken(usize, TokenKind),
+    UnexpectedToken((usize, usize), TokenKind),
     UnexpectedEOF,
     BuildScriptFailure,
     IO(std::io::Error)
