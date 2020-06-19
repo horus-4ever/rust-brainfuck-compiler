@@ -14,10 +14,16 @@ This compiler compiles brainfuck source code to x86 binaries. It targets Linux s
 
 Security of the binary :
 * **compile time** : it detects at compile time mismatched `[` or `]`
-* **runtime** : if the brainfuck stack pointer produces an overflow or underflow, then the programm stops immediatly. For now, there is no description on the error.
+* **runtime** : if the brainfuck stack pointer produces an overflow or underflow, then the programm stops immediatly. It displays the type of error and where it occured in the source code.
 
 ## Examples
 In the `test` folder, there are some brainfuck code examples. In the `build` directory, there is a CLI Mandelbrot programm. The original brainfuck source code is not provided.
+
+Example of error output, with the `overflow_error.bf` test code :
+```
+Runtime error : The stack pointer exceeded the stack size => |>|
+Error occured at pos (row, column) : 1 2
+```
 
 ## TODO List
 - [x] Working and efficient compiler
