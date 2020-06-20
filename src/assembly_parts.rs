@@ -28,17 +28,23 @@ newlinelen equ $ - newline
 
 space: db 32
 spacelen equ $ - space
+
+format: db '%.*s'
+format_len equ  - format
 ";
 
 pub const _PRINT_FUNCTION: &'static str = "
+extern putchar
+extern printf
 print:
-    pusha           ; save the registers states
-    mov edx, edx    ; msg length in edx
-    mov ecx, edi    ; msg to write is in edi : copy address to ecx
-    mov	ebx,1       ;file descriptor (stdout)
-    mov	eax,4       ;system call number (sys_write)
-    int	0x80        ;call kernel
-    ; end
+    pusha
+    push ebp
+    mov ebp, esp
+    push edi
+    push edx
+    push format
+    call printf
+    leave
     popa
     ret
 ";
@@ -64,9 +70,7 @@ print_number:
 .L2:
     cmp esp, ebp
     je .end
-    mov edi, esp
-    mov edx, 1
-    call print
+    call putchar
     pop edx
     jmp .L2
 .end:
@@ -76,6 +80,7 @@ print_number:
 ";
 
 pub const _INPUT_FUNCTION: &'static str = "
+extern getchar
 input:
     pusha
 
@@ -87,20 +92,19 @@ input:
     mov edx, askinput_msg_len
     call print
     
-    mov eax, 3
-    mov ebx, 2
-    mov ecx, input_byte
-    mov edx, 2        ; n + 1 byte to read (cause of newline)
-    int 80h
-    
+    call getchar
+    mov byte[edi], al
+.L1:
+    cmp al, 10
+    je .L1end
+    call getchar
+    jmp .L1
+.L1end:
     mov edi, newline
     mov edx, 1
     call print
     
     popa
-    
-    mov al, byte[input_byte]
-    mov byte[edi], al
     ret
 ";
 
@@ -131,19 +135,23 @@ error:
     mov edi, newline
     mov edx, 1
     call print
-    jmp exit               ; we must exit : it's an error
+    mov eax, 1      ; return value : error
+    leave
+    ret
 ";
 
 pub const _START_FUNCTION: &'static str = "
-_start:
+global main
+main:
     call code
 
+    test eax, eax
+    jnz exit
     mov edi, success_msg
     mov edx, success_msg_len
     call print                  ; print a success msg
 exit:
-    mov	eax,1       ;system call number (sys_exit)
-    int	0x80        ;call kernel
+    ret
 
 code:
     push ebp
@@ -157,7 +165,6 @@ code:
     cmp edi, ebp
     jge .L1end
     stosb
-    inc edi
     jmp .L1
 .L1end:
     mov edi, esp
@@ -171,6 +178,7 @@ code:
 ";
 
 pub const _CODE_END: &'static str = "
+    xor eax, eax
     leave
     ret
 ";
@@ -208,7 +216,11 @@ pub const _LOOP_END: &'static str = "
 ";
 
 pub const _ON_PRINT: &'static str = "
-    call print
+    xor eax, eax
+    mov al, byte[edi]
+    push eax
+    call putchar
+    pop eax
 ";
 
 pub const _ON_INPUT: &'static str = "
