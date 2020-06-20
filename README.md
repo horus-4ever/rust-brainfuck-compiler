@@ -10,7 +10,7 @@ This project is a brainfuck compiler entirely written in Rust. It aims to produc
 ## Decription
 It has been written using the most recent stable Rust release.
 
-This compiler compiles brainfuck source code to x86 binaries. It targets Linux specifically, since I use directly the Linux syscalls for input and output, and not the C library.
+This compiler compiles brainfuck source code to x86 binaries. 
 
 Security of the binary :
 * **compile time** : it detects at compile time mismatched `[` or `]`
